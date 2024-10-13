@@ -39,6 +39,7 @@ void output(Graph& g, PlanarEmbedding& E, const char *str)
     std::cout << str << std::endl << "is_"
               << (is_planar_embedding(g, n_faces) ? "planar" : "")
               << (is_torodial_embedding(g, n_faces) ? "torodial" : "")
+              << (is_embedding(g, n_faces, 2) ? "genus2" : "")
               << "_embedding  num_faces: "
               << n_faces << "  genus: "
               << genus(g, n_faces) << std::endl << std::endl;
@@ -54,7 +55,7 @@ int main(int argc, char** argv)
     typedef Graph::edge_descriptor edge_descriptor;
     typedef std::list< edge_descriptor > list_t;
 
-    std::vector< list_t > embedding(4);
+    std::vector< list_t > embedding(5);
     Graph g(4);
     add_edge(0, 1, g, embedding);
     add_edge(0, 2, g, embedding);
@@ -68,6 +69,12 @@ int main(int argc, char** argv)
 
     embedding[3].reverse();
     output(g, embedding, "+---1\n|  /|\n0-2 |\n|  \\|\n+---3");
+
+    add_edge(0, 4, g, embedding);
+    add_edge(2, 4, g, embedding);
+    add_edge(1, 4, g, embedding);
+    output(g, embedding,
+           "+-----+\n| +---1\n| |  /|\n4-0-2 |\n+-|-+\\|\n  +---3");
 
     return 0;
 }

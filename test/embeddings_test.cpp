@@ -42,7 +42,7 @@ int main(int, char**)
     typedef Graph::edge_descriptor edge_descriptor;
     typedef std::list< edge_descriptor > list_t;
 
-    std::vector< list_t > embedding(4);
+    std::vector< list_t > embedding(5);
     Graph g(4);
     add_edge(0, 1, g, embedding);
     add_edge(0, 2, g, embedding);
@@ -54,6 +54,7 @@ int main(int, char**)
     BOOST_ASSERT(n_faces == 3);
     BOOST_ASSERT(is_planar_embedding(g, n_faces));
     BOOST_ASSERT(!is_torodial_embedding(g, n_faces));
+    BOOST_ASSERT(!is_embedding(g, n_faces, 2));
     BOOST_ASSERT(genus(g, n_faces) == 0);
 
     add_edge(2, 3, g, embedding);
@@ -62,6 +63,7 @@ int main(int, char**)
     BOOST_ASSERT(n_faces == 2);
     BOOST_ASSERT(!is_planar_embedding(g, n_faces));
     BOOST_ASSERT(is_torodial_embedding(g, n_faces));
+    BOOST_ASSERT(!is_embedding(g, n_faces, 2));
     BOOST_ASSERT(genus(g, n_faces) == 1);
 
     embedding[3].reverse();
@@ -70,7 +72,18 @@ int main(int, char**)
     BOOST_ASSERT(n_faces == 4);
     BOOST_ASSERT(is_planar_embedding(g, n_faces));
     BOOST_ASSERT(!is_torodial_embedding(g, n_faces));
+    BOOST_ASSERT(!is_embedding(g, n_faces, 2));
     BOOST_ASSERT(genus(g, n_faces) == 0);
 
+    add_edge(0, 4, g, embedding);
+    add_edge(2, 4, g, embedding);
+    add_edge(1, 4, g, embedding);
+
+    n_faces = num_faces(g, &embedding[0]);
+    BOOST_ASSERT(n_faces == 2);
+    BOOST_ASSERT(!is_planar_embedding(g, n_faces));
+    BOOST_ASSERT(!is_torodial_embedding(g, n_faces));
+    BOOST_ASSERT(is_embedding(g, n_faces, 2));
+    BOOST_ASSERT(genus(g, n_faces) == 2);
     return boost::report_errors();
 }
