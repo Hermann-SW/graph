@@ -29,27 +29,27 @@ struct count_visitor : public planar_face_traversal_visitor
 };
 
 template< class graph >
-bool is_embedding(graph g, std::size_t n_faces, std::size_t genus)
+bool is_embedding(graph g, std::size_t n_faces, std::size_t genus, int n_ccs=1)
 {
-    return n_faces + num_vertices(g) - num_edges(g) == 2 - 2 * genus;
+    return n_faces + num_vertices(g) - num_edges(g) == 1 + n_ccs - 2 * genus;
 }
 
 template< class graph >
-bool is_planar_embedding(graph g, std::size_t n_faces)
+bool is_planar_embedding(graph g, std::size_t n_faces, int n_ccs = 1)
 {
-    return is_embedding(g, n_faces, 0);
+    return is_embedding(g, n_faces, 0, n_ccs);
 }
 
 template< class graph >
-bool is_torodial_embedding(graph g, std::size_t n_faces)
+bool is_torodial_embedding(graph g, std::size_t n_faces, int n_ccs = 1)
 {
-    return is_embedding(g, n_faces, 1);
+    return is_embedding(g, n_faces, 1, n_ccs);
 }
 
 template< typename graph >
-std::size_t genus(graph g, std::size_t n_faces)
+std::size_t genus(graph g, std::size_t n_faces, int n_ccs = 1)
 {
-    std::size_t u = num_edges(g) + 2 - n_faces - num_vertices(g);
+    std::size_t u = num_edges(g) + 1 + n_ccs - n_faces - num_vertices(g);
     BOOST_ASSERT(u % 2 == 0);
     return u / 2;
 }
