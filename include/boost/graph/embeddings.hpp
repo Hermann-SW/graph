@@ -20,14 +20,6 @@
 namespace boost
 {
 
-std::size_t embeddings_num_faces;
-
-struct count_visitor : public planar_face_traversal_visitor
-{
-    void begin_traversal() { embeddings_num_faces = 0; }
-    void begin_face() { ++embeddings_num_faces; }
-};
-
 template< class graph >
 bool is_embedding(graph g, std::size_t n_faces, std::size_t genus, int n_ccs=1)
 {
@@ -58,10 +50,16 @@ template < typename Graph, typename PlanarEmbedding >
 std::size_t num_faces(
     const Graph& g, PlanarEmbedding embedding)
 {
-    count_visitor c_vis;
-    planar_face_traversal(g, &embedding[0], c_vis);
-    return embeddings_num_faces;
+    struct : public planar_face_traversal_visitor
+    {
+        std::size_t n_faces = 0;
 
+        void begin_face() { ++n_faces; };
+    } cnt_vis;
+
+    planar_face_traversal(g, &embedding[0], cnt_vis);
+
+    return cnt_vis.n_faces;
 }
 
 } // namespace boost
