@@ -38,7 +38,6 @@ int main(int, char**)
     typedef adjacency_list< vecS, vecS, undirectedS,
                             no_property, property< edge_index_t, int > > Graph;
 
-    typedef Graph::vertex_descriptor vertex_descriptor;
     typedef Graph::edge_descriptor edge_descriptor;
     typedef std::list< edge_descriptor > list_t;
 
