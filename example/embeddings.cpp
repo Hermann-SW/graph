@@ -88,7 +88,7 @@ int main(int, char**)
     add_edge(2, 4, g, embedding);
     add_edge(1, 4, g, embedding);
     output(g, embedding,
-           "  +---+\n+-|---1\n| |  /|\n4-0-2 |\n+-|-+\\|\n  +---3");
+      "  +---+\n+-|---1+\n| |  / |\n4-0-2  |\n| | |\\ |\n+-|-+ \\|\n  +----3");
 
     std::cout << "Vertices on the faces: " << std::endl;
     planar_face_traversal(g, &embedding[0], v_vis);
