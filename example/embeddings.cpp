@@ -15,24 +15,6 @@
 
 using namespace boost;
 
-std::size_t edge_count = 0;
-
-template< typename Graph, typename PlanarEmbedding >
-std::pair< typename Graph::edge_descriptor, bool >
-add_edge(typename Graph::vertex_descriptor v,
-         typename Graph::vertex_descriptor w,
-         Graph& g,
-         PlanarEmbedding& E)
-{
-    std::pair< typename Graph::edge_descriptor, bool > ep = add_edge(v, w, g);
-    put(get(edge_index, g), ep.first, edge_count++);
-
-    E[v].push_back(ep.first);
-    E[w].push_back(ep.first);
-
-    return ep;
-}
-
 template< typename Graph, typename PlanarEmbedding >
 void output(Graph& g, PlanarEmbedding& E, const char *str)
 {
@@ -71,22 +53,24 @@ int main(int, char**)
 
     std::vector< list_t > embedding(5);
     Graph g(5);
-    add_edge(0, 1, g, embedding);
-    add_edge(0, 2, g, embedding);
-    add_edge(0, 3, g, embedding);
-    add_edge(1, 3, g, embedding);
-    add_edge(1, 2, g, embedding);
+    emb_edge_index_update_visitor vis(get(edge_index, g), 0, &embedding);
+
+    vis.visit_vertex_pair(0, 1, g);
+    vis.visit_vertex_pair(0, 2, g);
+    vis.visit_vertex_pair(0, 3, g);
+    vis.visit_vertex_pair(1, 3, g);
+    vis.visit_vertex_pair(1, 2, g);
     output(g, embedding, "  +---1\n  |  /|\n4 0-2 |\n  |   |\n  +---3");
 
-    add_edge(2, 3, g, embedding);
+    vis.visit_vertex_pair(2, 3, g);
     output(g, embedding, "  +---1\n  |  /|\n4 0-2-|-+\n  |   | |\n  +---3-+");
 
     embedding[3].reverse();
     output(g, embedding, "  +---1\n  |  /|\n4 0-2 |\n  |  \\|\n  +---3");
 
-    add_edge(0, 4, g, embedding);
-    add_edge(2, 4, g, embedding);
-    add_edge(1, 4, g, embedding);
+    vis.visit_vertex_pair(0, 4, g);
+    vis.visit_vertex_pair(2, 4, g);
+    vis.visit_vertex_pair(1, 4, g);
     output(g, embedding,
       "  +---+\n+-|---1+\n| |  / |\n4-0-2  |\n| | |\\ |\n+-|-+ \\|\n  +----3");
 

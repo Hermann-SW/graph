@@ -20,6 +20,36 @@
 namespace boost
 {
 
+template < typename EdgeIndexMap, typename PlanarEmbedding > struct emb_edge_index_update_visitor
+{
+    typedef
+        typename property_traits< EdgeIndexMap >::value_type edge_index_value_t;
+
+    emb_edge_index_update_visitor(
+        EdgeIndexMap em, edge_index_value_t next_index_available, PlanarEmbedding *E)
+    : m_em(em), m_next_index(next_index_available), m_E(E)
+    {
+    }
+
+    template < typename Graph, typename Vertex >
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    {
+        typedef typename graph_traits< Graph >::edge_descriptor edge_t;
+        std::pair< edge_t, bool > return_value = add_edge(u, v, g);
+        if (return_value.second) {
+            put(m_em, return_value.first, m_next_index++);
+
+	    (*m_E)[u].push_back(return_value.first);
+	    (*m_E)[v].push_back(return_value.first);
+	}
+    }
+
+private:
+    EdgeIndexMap m_em;
+    edge_index_value_t m_next_index;
+    PlanarEmbedding *m_E;
+};
+
 template< class graph >
 bool is_embedding(graph g, std::size_t n_faces, std::size_t genus,
                   std::size_t n_ccs=1)
