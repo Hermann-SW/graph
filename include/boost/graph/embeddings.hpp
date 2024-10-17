@@ -32,16 +32,31 @@ template < typename EdgeIndexMap, typename PlanarEmbedding > struct emb_edge_ind
     }
 
     template < typename Graph, typename Vertex >
-    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g,
+        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itu,
+        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itv)
     {
         typedef typename graph_traits< Graph >::edge_descriptor edge_t;
         std::pair< edge_t, bool > return_value = add_edge(u, v, g);
         if (return_value.second) {
             put(m_em, return_value.first, m_next_index++);
 
-	    (*m_E)[u].push_back(return_value.first);
-	    (*m_E)[v].push_back(return_value.first);
+	    (*m_E)[u].insert(itu, return_value.first);
+	    (*m_E)[v].insert(itv, return_value.first);
 	}
+    }
+
+    template < typename Graph, typename Vertex >
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g,
+        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itu)
+    {
+        visit_vertex_pair(u, v, g, itu, (*m_E)[v].end());
+    }
+
+    template < typename Graph, typename Vertex >
+    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    {
+        visit_vertex_pair(u, v, g, (*m_E)[u].end());
     }
 
 private:
