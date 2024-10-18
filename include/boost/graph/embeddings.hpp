@@ -47,9 +47,9 @@ std::size_t genus(graph g, std::size_t n_faces, std::size_t n_ccs = 1)
     return u / 2;
 }
 
-template < typename Graph, typename PlanarEmbedding, typename EdgeIndexMap >
+template < typename Graph, typename Embedding, typename EdgeIndexMap >
 std::size_t num_faces(
-    const Graph& g, PlanarEmbedding embedding, EdgeIndexMap em)
+    const Graph& g, Embedding embedding, EdgeIndexMap em)
 {
     struct : public planar_face_traversal_visitor
     {
@@ -63,8 +63,8 @@ std::size_t num_faces(
     return cnt_vis.n_faces;
 }
 
-template < typename Graph, typename PlanarEmbedding >
-inline std::size_t num_faces(const Graph& g, PlanarEmbedding embedding)
+template < typename Graph, typename Embedding >
+inline std::size_t num_faces(const Graph& g, Embedding embedding)
 {
     return num_faces(g, embedding, get(edge_index, g));
 }
@@ -72,13 +72,13 @@ inline std::size_t num_faces(const Graph& g, PlanarEmbedding embedding)
 
 // enhanced "struct edge_index_update_visitor" in planar_detail/add_edge_visitors.hpp
 //
-template < typename EdgeIndexMap, typename PlanarEmbedding > struct emb_edge_index_update_visitor
+template < typename EdgeIndexMap, typename Embedding > struct emb_edge_index_update_visitor
 {
     typedef
         typename property_traits< EdgeIndexMap >::value_type edge_index_value_t;
 
     emb_edge_index_update_visitor(
-        EdgeIndexMap em, edge_index_value_t next_index_available, PlanarEmbedding *E)
+        EdgeIndexMap em, edge_index_value_t next_index_available, Embedding *E)
     : m_em(em), m_next_index(next_index_available), m_E(E)
     {
     }
@@ -114,7 +114,7 @@ template < typename EdgeIndexMap, typename PlanarEmbedding > struct emb_edge_ind
 private:
     EdgeIndexMap m_em;
     edge_index_value_t m_next_index;
-    PlanarEmbedding *m_E;
+    Embedding *m_E;
 };
 
 } // namespace boost

@@ -15,8 +15,8 @@
 
 using namespace boost;
 
-template< typename Graph, typename PlanarEmbedding >
-void output(Graph& g, PlanarEmbedding& E, const char *str)
+template< typename Graph, typename Embedding >
+void output(Graph& g, Embedding& E, const char *str)
 {
     std::size_t n_faces = num_faces(g, &E[0]);
 
