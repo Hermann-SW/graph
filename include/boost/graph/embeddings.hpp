@@ -9,13 +9,7 @@
 #ifndef __EMBEDDINGS_HPP__
 #define __EMBEDDINGS_HPP__
 
-#include <vector>
-#include <list>
-#include <boost/config.hpp>
-#include <boost/next_prior.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/properties.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/graph/planar_face_traversal.hpp>
 
 namespace boost
 {

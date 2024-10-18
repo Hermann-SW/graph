@@ -7,7 +7,6 @@
 //=======================================================================
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/graph/connected_components.hpp>
 
 #include <boost/graph/planar_face_traversal.hpp>

@@ -5,12 +5,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <iostream>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_map/property_map.hpp>
 
-#include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/embeddings.hpp>
 
 using namespace boost;
