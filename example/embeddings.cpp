@@ -96,6 +96,7 @@ int main(int argc, char**argv)
     std::size_t n_ccs;
     std::vector< std::size_t > component(num_vertices(g));
     _(n_ccs = connected_components(g, &component[0]);)
+    std::cout << "n_ccs: " << n_ccs << std::endl;
 
     bool b;
     _(b = is_planar_embedding(g, n_faces, n_ccs);)
