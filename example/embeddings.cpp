@@ -8,6 +8,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/embeddings.hpp>
@@ -41,8 +42,15 @@ struct vertex_output_visitor : public planar_face_traversal_visitor
     }
 } v_vis;
 
-int main(int, char**)
+// time measurements
+clock_t start_;
+#define _(blk) std::cerr << #blk << " "; start_ = clock(); blk \
+    std::cerr << (clock()-start_)*1.0/CLOCKS_PER_SEC << "s" << std::endl;
+
+int main(int argc, char**argv)
 {
+    int n = (argc > 1) ? atoi(argv[1]) : 6;
+
     typedef adjacency_list< vecS, vecS, undirectedS,
         no_property, property< edge_index_t, int > >
         Graph;
@@ -75,6 +83,23 @@ int main(int, char**)
 
     std::cout << "Vertices on the faces: " << std::endl;
     planar_face_traversal(g, &embedding[0], v_vis);
+    std::cout << std::endl;
+
+
+    std::cout << "n: " << n << std::endl;
+    std::vector< list_t > embedding2(n);
+    _(simple_maximal_planar_random_embedding(g, &embedding2, n);)
+
+    _(std::size_t n_faces = num_faces(g, &embedding2[0]);)
+    std::cout << "n_faces: " << n_faces << std::endl;
+
+    std::size_t n_ccs;
+    std::vector< std::size_t > component(num_vertices(g));
+    _(n_ccs = connected_components(g, &component[0]);)
+
+    bool b;
+    _(b = is_planar_embedding(g, n_faces, n_ccs);)
+    std::cout << "b: " << b << std::endl;
 
     return 0;
 }

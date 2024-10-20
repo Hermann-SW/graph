@@ -7,6 +7,7 @@
 //=======================================================================
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
 #include <boost/graph/embeddings.hpp>
 
@@ -81,5 +82,20 @@ int main(int, char**)
     BOOST_ASSERT(!is_torodial_embedding(g, n_faces));
     BOOST_ASSERT(is_embedding(g, n_faces, 2));
     BOOST_ASSERT(genus(g, n_faces) == 2);
+
+
+    std::size_t n = 10000;
+    std::vector< list_t > embedding2(n);
+    simple_maximal_planar_random_embedding(g, &embedding2, 10000);
+
+    std::size_t n_ccs;
+    std::vector< std::size_t > component(num_vertices(g));
+    BOOST_ASSERT(connected_components(g, &component[0]) == 1);
+
+    n_faces = num_faces(g, &embedding2[0]);
+    BOOST_ASSERT(n_faces == 2 * n - 4);
+
+    BOOST_ASSERT(is_planar_embedding(g, n_faces));
+
     return boost::report_errors();
 }
