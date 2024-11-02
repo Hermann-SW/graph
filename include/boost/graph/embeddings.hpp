@@ -85,14 +85,14 @@ template < typename EdgeIndexMap, typename Embedding > struct emb_edge_index_upd
         typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itu,
         typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itv)
     {
-        typedef typename graph_traits< Graph >::edge_descriptor edge_t;
-        std::pair< edge_t, bool > return_value = add_edge(u, v, g);
-        if (return_value.second) {
-            put(m_em, return_value.first, m_next_index++);
+        std::pair< typename graph_traits< Graph >::edge_descriptor, bool >
+            et = add_edge(u, v, g);
+        BOOST_ASSERT(et.second);
 
-            (*m_E)[u].insert(itu, return_value.first);
-            (*m_E)[v].insert(itv, return_value.first);
-        }
+        put(m_em, et.first, m_next_index++);
+
+        (*m_E)[u].insert(itu, et.first);
+        (*m_E)[v].insert(itv, et.first);
     }
 
     template < typename Graph, typename Vertex >
