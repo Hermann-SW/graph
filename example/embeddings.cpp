@@ -86,7 +86,8 @@ int main(int argc, char**argv)
     std::cout << std::endl;
 
 
-    std::cout << "n: " << n << std::endl;
+    n = 10000;
+    std::cout << "==========\nn: " << n << std::endl;
     std::vector< list_t > embedding2(n);
     _(simple_maximal_planar_random_embedding(g, &embedding2, n);)
 

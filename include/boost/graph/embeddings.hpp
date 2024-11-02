@@ -53,6 +53,8 @@ std::size_t num_faces(
         void begin_face() { ++n_faces; };
     } cnt_vis;
 
+    // works for non-planar embeddings as well, despite its name
+    //
     planar_face_traversal(g, &embedding[0], cnt_vis, em);
 
     return cnt_vis.n_faces;
