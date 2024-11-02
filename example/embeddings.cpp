@@ -60,7 +60,7 @@ int main(int argc, char**argv)
 
     std::vector< list_t > embedding(5);
     Graph g(5);
-    emb_edge_index_update_visitor vis(get(edge_index, g), 0, &embedding);
+    emb_edge_index_update_visitor vis(get(edge_index, g), 0, &embedding, g);
 
     vis.visit_vertex_pair(0, 1, g);
     vis.visit_vertex_pair(0, 2, g);

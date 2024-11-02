@@ -69,23 +69,28 @@ inline std::size_t num_faces(const Graph& g, Embedding embedding)
 
 // enhanced "struct edge_index_update_visitor" in planar_detail/add_edge_visitors.hpp
 //
-template < typename EdgeIndexMap, typename Embedding > struct emb_edge_index_update_visitor
+template < typename EdgeIndexMap, typename Embedding, typename Graph > struct emb_edge_index_update_visitor
 {
     typedef
         typename property_traits< EdgeIndexMap >::value_type edge_index_value_t;
+    typedef
+        typename graph_traits< Graph >::out_edge_iterator out_edge_iterator;
+    typedef
+        typename graph_traits< Graph >::vertex_descriptor vertex_descriptor;
+    typedef
+        typename graph_traits< Graph >::edge_descriptor edge_descriptor;
 
     emb_edge_index_update_visitor(
-        EdgeIndexMap em, edge_index_value_t next_index_available, Embedding *E)
+        EdgeIndexMap em, edge_index_value_t next_index_available, Embedding *E, Graph)
     : m_em(em), m_next_index(next_index_available), m_E(E)
     {
     }
 
-    template < typename Graph, typename Vertex >
-    void visit_vertex_pair(Vertex u, Vertex v, Graph& g,
-        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itu,
-        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itv)
+    void visit_vertex_pair(vertex_descriptor u, vertex_descriptor v, Graph& g,
+        typename std::list< edge_descriptor >::iterator itu,
+        typename std::list< edge_descriptor >::iterator itv)
     {
-        std::pair< typename graph_traits< Graph >::edge_descriptor, bool >
+        std::pair< edge_descriptor, bool >
             et = add_edge(u, v, g);
         BOOST_ASSERT(et.second);
 
@@ -93,25 +98,43 @@ template < typename EdgeIndexMap, typename Embedding > struct emb_edge_index_upd
 
         (*m_E)[u].insert(itu, et.first);
         (*m_E)[v].insert(itv, et.first);
+
+        storage.push_back(std::make_pair(
+            --(out_edges(u, g).second),     // std::prev() hangs
+            --(out_edges(v, g).second)
+        ));
     }
 
-    template < typename Graph, typename Vertex >
-    void visit_vertex_pair(Vertex u, Vertex v, Graph& g,
-        typename std::list< typename graph_traits< Graph >::edge_descriptor >::iterator itu)
+    void visit_vertex_pair(vertex_descriptor u, vertex_descriptor v, Graph& g,
+        typename std::list< edge_descriptor >::iterator itu)
     {
         visit_vertex_pair(u, v, g, itu, (*m_E)[v].end());
     }
 
-    template < typename Graph, typename Vertex >
-    void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
+    void visit_vertex_pair(vertex_descriptor u, vertex_descriptor v, Graph& g)
     {
         visit_vertex_pair(u, v, g, (*m_E)[u].end());
+    }
+
+    // O(1)
+    void visit_edge(edge_descriptor e, Graph& g)
+    {
+        auto it_to_front = [](out_edge_iterator it, Graph& g)
+        {
+            auto &L = g.impl().out_edge_list(it.m_src);
+            L.splice(L.begin(), L, it.base());
+        };
+
+        it_to_front(storage[m_em[e]].first, g);
+        it_to_front(storage[m_em[e]].second, g);
+        boost::remove_edge(e, g);
     }
 
 private:
     EdgeIndexMap m_em;
     edge_index_value_t m_next_index;
     Embedding *m_E;
+    std::vector< std::pair< out_edge_iterator, out_edge_iterator > > storage;
 };
 
 template< typename graph, typename Embedding >
@@ -164,7 +187,7 @@ void simple_maximal_planar_random_embedding(graph& g, Embedding *E, int n)
     typedef std::vector< vertex_t > vec_vertex_t;
 
     std::vector< vertex_descriptor > V;  V.reserve(n);
-    emb_edge_index_update_visitor vis(get(edge_index, g), 0, E);
+    emb_edge_index_update_visitor vis(get(edge_index, g), 0, E, g);
 
     V[0] = add_vertex(g);
     V[1] = add_vertex(g);
