@@ -57,10 +57,12 @@ int main(int argc, char**argv)
 
     typedef Graph::edge_descriptor edge_descriptor;
     typedef std::list< edge_descriptor > list_t;
+    typedef typename property_map< Graph, edge_index_t >::type EdgeIndexMap;
 
     std::vector< list_t > embedding(5);
     Graph g(5);
-    emb_edge_index_update_visitor vis(get(edge_index, g), 0, &embedding, g);
+    emb_edge_index_update_visitor< EdgeIndexMap, std::vector< list_t >, Graph >
+        vis(get(edge_index, g), 0, &embedding, g);
 
     vis.visit_vertex_pair(0, 1, g);
     vis.visit_vertex_pair(0, 2, g);

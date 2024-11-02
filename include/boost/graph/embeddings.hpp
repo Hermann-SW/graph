@@ -185,9 +185,11 @@ void simple_maximal_planar_random_embedding(graph& g, Embedding *E, int n)
     typedef typename list_t::iterator list_iterator;
     typedef std::pair< vertex_descriptor, list_iterator > vertex_t;
     typedef std::vector< vertex_t > vec_vertex_t;
+    typedef typename property_map< graph, edge_index_t >::type EdgeIndexMap;
 
     std::vector< vertex_descriptor > V;  V.reserve(n);
-    emb_edge_index_update_visitor vis(get(edge_index, g), 0, E, g);
+    emb_edge_index_update_visitor< EdgeIndexMap, Embedding, graph >
+        vis(get(edge_index, g), 0, E, g);
 
     V[0] = add_vertex(g);
     V[1] = add_vertex(g);
